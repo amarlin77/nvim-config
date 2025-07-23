@@ -1,11 +1,12 @@
 return {
   {
-    "hrsh7th/cmp-nvim-lsp"
-  },
-  {
     "L3MON4D3/LuaSnip",
     version = "v2.*",
     build = "make install_jsregexp",
+    dependencies = {
+      "saadparwaiz1/cmp_luasnip",
+      "rafamadriz/friendly-snippets",
+    },
     event = "InsertEnter",
     config = function()
       require("luasnip.loaders.from_lua").lazy_load({paths = "./lua/luasnip/"})
@@ -15,6 +16,7 @@ return {
         enable_autosnippets = true,
         store_selection_keys = "<Tab>",
       })
+       
       vim.keymap.set({"i"}, "<C-k>", function() ls.expand() end, {silent = true, desc = "expand autocomplete"})
       vim.keymap.set({"i", "s"}, "<C-j>", function() ls.jump( 1) end, {silent = true, desc = "next autocomplete"})
       vim.keymap.set({"i", "s"}, "<C-L>", function() ls.jump(-1) end, {silent = true, desc = "previous autocomplete"})
@@ -24,10 +26,6 @@ return {
         end
       end, {silent = true, desc = "select autocomplete"})
     end,
-    dependencies = {
-      "saadparwaiz1/cmp_luasnip",
-      "rafamadriz/friendly-snippets",
-    },
   },
   {
     "micangl/cmp-vimtex",
@@ -44,10 +42,13 @@ return {
       "hrsh7th/cmp-path",--autocomplete path variables
       "hrsh7th/cmp-cmdline",
       "saadparwaiz1/cmp_luasnip",--autocomplete from luasnip
+      "mlaursen/vim-react-snippets",
       "L3MON4D3/LuaSnip",
     },
     config = function()
       local luasnip = require("luasnip")
+      require('vim-react-snippets').lazy_load()
+      local vimreact = require('vim-react-snippets.config')
       local cmp = require("cmp")
       require("luasnip.loaders.from_vscode").lazy_load()
 
