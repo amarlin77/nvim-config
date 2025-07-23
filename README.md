@@ -7,10 +7,10 @@
 NeoVim Configuration (Version 0.11.2)
 
 Requires...
-- [] npm
-- [] lua
-- [] lua-language-server
-- [] gcc or clang
+- [ ] npm
+- [ ] lua
+- [ ] lua-language-server
+- [ ] gcc or clang
 
 On Linux...
 ```
