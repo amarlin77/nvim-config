@@ -10,6 +10,21 @@ if not vim.loop.fs_stat(lazypath) then
   })
 end
 vim.opt.rtp:prepend(lazypath)
+vim.wo.relativenumber = true
+vim.wo.cursorline = true
+
+local mygroup = vim.api.nvim_create_augroup('vimrc', { clear = true })
+vim.api.nvim_create_autocmd({'BufWinLeave'}, {
+    pattern = {'*.*'},
+    group = mygroup,
+    command = 'mkview | filetype detect',
+})
+vim.api.nvim_create_autocmd({'BufWinEnter'}, {
+    pattern = {'*.*'},
+    group = mygroup,
+    command = 'silent! loadview | filetype detect',
+})
+
 
 require("vim-options")
 require("lazy").setup("plugins")
