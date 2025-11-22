@@ -58,17 +58,26 @@ return {
     },
 
     opts = {
-    servers = {
-      svls = {
-        root_dir = function(fname)
-          return require("lspconfig.util").find_git_ancestor(fname)
-        end,
-        cmd = {"svls"},
-        filetypes={"verilog","systemverilog"},
-      },
+        servers = {
+            svls = {
+                root_dir = function(fname)
+                    return require("lspconfig.util").find_git_ancestor(fname)
+                end,
+                cmd = { "svls" },
+                filetypes = { "verilog", "systemverilog" },
+            },
+        },
     },
-  },
     config = function()
+        require('lspconfig').arduino_language_server.setup({
+            cmd = {
+                "arduino-language-server",
+                "-cli-config", "/home/aaron/.arduino15/arduino-cli.yaml",
+                "-fqbn", "esp32:esp32:esp32c6",
+                "-cli", "arduino-cli",
+                "-clangd", "clangd"
+            }
+        })
         require("conform").setup({
             formatters_by_ft = {
             }
@@ -110,7 +119,6 @@ return {
                     })
                     vim.g.zig_fmt_parse_errors = 0
                     vim.g.zig_fmt_autosave = 0
-
                 end,
                 ["lua_ls"] = function()
                     local lspconfig = require("lspconfig")
@@ -167,5 +175,5 @@ return {
                 prefix = "",
             },
         })
-  end
+    end
 }

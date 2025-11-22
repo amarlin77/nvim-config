@@ -25,6 +25,12 @@ vim.api.nvim_create_autocmd({'BufWinEnter'}, {
     command = 'silent! loadview | filetype detect',
 })
 
+vim.lsp.set_log_level("off")
+
+if vim.g.vscode then
+    require "vscode_keymaps"
+end
+
 
 require("vim-options")
 require("lazy").setup("plugins")
