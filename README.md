@@ -1,12 +1,12 @@
-<!-- Configuration for NeoVim on Windows x64 Machine  -->
+<!-- Configuration for NeoVim on Arch Linux -->
 <!---->
-<!-- Make sure to use clang as C compiler  -->
+<!-- clang is set as the default C compiler (for clangd) -->
 <!---->
-<!-- Still some issues with the lua-language-server sometimes -->
 
 NeoVim Configuration (Version 0.11.2)
 
 Requires...
+- [ ] nvim installation
 - [ ] npm
 - [ ] lua
 - [ ] lua-language-server
