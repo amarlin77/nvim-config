@@ -1,46 +1,3 @@
--- return {
---   {
---     "williamboman/mason.nvim",
---     lazy = false,
---     config = function()
---       require("mason").setup()
---     end,
---   },
---   {
---     "williamboman/mason-lspconfig.nvim",
---     lazy = false,
---     opts = {
---       auto_install = true,
---     },
---   },
---   {
---     "neovim/nvim-lspconfig",
---     lazy = false,
---     config = function()
---       local capabilities = require('cmp_nvim_lsp').default_capabilities()
---
---       local lspconfig = require("lspconfig")
---       lspconfig.ts_ls.setup({
---         capabilities = capabilities
---       })
---       lspconfig.solargraph.setup({
---         capabilities = capabilities
---       })
---       lspconfig.html.setup({
---         capabilities = capabilities
---       })
---       lspconfig.lua_ls.setup({
---         capabilities = capabilities
---       })
---
---       vim.keymap.set("n", "K", vim.lsp.buf.hover, {})
---       vim.keymap.set("n", "<leader>gd", vim.lsp.buf.definition, {})
---       vim.keymap.set("n", "<leader>gr", vim.lsp.buf.references, {})
---       vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, {})
---     end,
---   },
--- }
---
 return {
     "neovim/nvim-lspconfig",
     dependencies = {
@@ -69,26 +26,53 @@ return {
         },
     },
     config = function()
-        require('lspconfig').arduino_language_server.setup({
+        require("lspconfig").harper_ls.setup({
+            filetypes = { "latex" },
+        })
+        require("lspconfig").arduino_language_server.setup({
+            root_dir = require("lspconfig.util").root_pattern("sketch.yaml", "sketch.json", ".git", "*.ino"),
             cmd = {
                 "arduino-language-server",
-                "-cli-config", "/home/aaron/.arduino15/arduino-cli.yaml",
-                "-fqbn", "esp32:esp32:esp32c6",
-                "-cli", "arduino-cli",
-                "-clangd", "clangd"
-            }
+                "-cli-config",
+                "/home/aaron/.arduino15/arduino-cli.yaml",
+                "-fqbn",
+                "esp32:esp32:esp32c6",
+                "-cli",
+                "arduino-cli",
+                "-clangd",
+                "clangd",
+                -- "-log", "-log-file", "/home/aaron/arduino_lsp.log"
+            },
         })
         require("conform").setup({
-            formatters_by_ft = {
-            }
+            formatters_by_ft = {},
         })
-        local cmp = require('cmp')
+        local cmp = require("cmp")
         local cmp_lsp = require("cmp_nvim_lsp")
         local capabilities = vim.tbl_deep_extend(
             "force",
             {},
             vim.lsp.protocol.make_client_capabilities(),
-            cmp_lsp.default_capabilities())
+            cmp_lsp.default_capabilities()
+        )
+
+        local lspconfig = require("lspconfig")
+        local configs = require("lspconfig.configs")
+
+        if not configs.zuban then
+            configs.zuban = {
+                default_config = {
+                    cmd = { "zuban", "server" },
+                    filetypes = { "python" },
+                    root_dir = lspconfig.util.root_pattern("Cargo.toml", "zuban.toml", "pyproject.toml", "setup.py", "mypy.ini"),
+                    settings = {},
+                },
+            }
+        end
+
+        lspconfig.zuban.setup({
+            capabilities = capabilities,
+        })
 
         require("fidget").setup({})
         require("mason").setup()
@@ -100,9 +84,9 @@ return {
             },
             handlers = {
                 function(server_name) -- default handler (optional)
-                    require("lspconfig")[server_name].setup {
-                        capabilities = capabilities
-                    }
+                    require("lspconfig")[server_name].setup({
+                        capabilities = capabilities,
+                    })
                 end,
 
                 zls = function()
@@ -122,7 +106,7 @@ return {
                 end,
                 ["lua_ls"] = function()
                     local lspconfig = require("lspconfig")
-                    lspconfig.lua_ls.setup {
+                    lspconfig.lua_ls.setup({
                         capabilities = capabilities,
                         settings = {
                             Lua = {
@@ -133,13 +117,13 @@ return {
                                     defaultConfig = {
                                         indent_style = "space",
                                         indent_size = "2",
-                                    }
+                                    },
                                 },
-                            }
-                        }
-                    }
+                            },
+                        },
+                    })
                 end,
-            }
+            },
         })
 
         local cmp_select = { behavior = cmp.SelectBehavior.Select }
@@ -147,21 +131,21 @@ return {
         cmp.setup({
             snippet = {
                 expand = function(args)
-                    require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
+                    require("luasnip").lsp_expand(args.body) -- For `luasnip` users.
                 end,
             },
             mapping = cmp.mapping.preset.insert({
-                ['<C-p>'] = cmp.mapping.select_prev_item(cmp_select),
-                ['<C-n>'] = cmp.mapping.select_next_item(cmp_select),
-                ['<C-y>'] = cmp.mapping.confirm({ select = true }),
+                ["<C-p>"] = cmp.mapping.select_prev_item(cmp_select),
+                ["<C-n>"] = cmp.mapping.select_next_item(cmp_select),
+                ["<C-y>"] = cmp.mapping.confirm({ select = true }),
                 ["<C-Space>"] = cmp.mapping.complete(),
             }),
             sources = cmp.config.sources({
-                { name = 'nvim_lsp' },
-                { name = 'luasnip' }, -- For luasnip users.
+                { name = "nvim_lsp" },
+                { name = "luasnip" }, -- For luasnip users.
             }, {
-                { name = 'buffer' },
-            })
+                { name = "buffer" },
+            }),
         })
 
         vim.diagnostic.config({
@@ -175,5 +159,5 @@ return {
                 prefix = "",
             },
         })
-    end
+    end,
 }
